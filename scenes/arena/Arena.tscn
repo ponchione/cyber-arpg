@@ -1,7 +1,8 @@
-[gd_scene load_steps=7 format=3]
+[gd_scene load_steps=8 format=3]
 
 [ext_resource type="PackedScene" path="res://scenes/player/Player.tscn" id="1_player"]
 [ext_resource type="PackedScene" path="res://scenes/ui/PlayerHud.tscn" id="2_player_hud"]
+[ext_resource type="PackedScene" path="res://scenes/enemies/EnemyDummy.tscn" id="3_enemy_dummy"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_top_wall"]
 size = Vector2(1920, 32)
@@ -77,5 +78,8 @@ color = Color(0.52, 0.08, 0.2, 1)
 polygon = PackedVector2Array(-16, -540, 16, -540, 16, 540, -16, 540)
 
 [node name="Player" parent="." instance=ExtResource("1_player")]
+
+[node name="EnemyDummy" parent="." instance=ExtResource("3_enemy_dummy")]
+position = Vector2(360, 0)
 
 [node name="PlayerHud" parent="." instance=ExtResource("2_player_hud")]

@@ -6,11 +6,15 @@ public partial class PlayerController : CharacterBody2D
     private const string MoveRightAction = "move_right";
     private const string MoveUpAction = "move_up";
     private const string MoveDownAction = "move_down";
+    private const string PrimaryFireAction = "primary_fire";
 
     [Export] public float MoveSpeed { get; set; } = 260.0f;
     [Export] public NodePath AimPivotPath { get; set; } = "AimPivot";
+    [Export] public PackedScene KineticBurstScene { get; set; } = null!;
+    [Export] public float FireSpawnDistance { get; set; } = 36.0f;
 
     private Node2D _aimPivot = null!;
+    private Vector2 _aimDirection = Vector2.Right;
 
     public override void _Ready()
     {
@@ -29,6 +33,11 @@ public partial class PlayerController : CharacterBody2D
         MoveAndSlide();
 
         UpdateAimDirection();
+
+        if (Input.IsActionJustPressed(PrimaryFireAction))
+        {
+            FireKineticBurst();
+        }
     }
 
     private void UpdateAimDirection()
@@ -40,6 +49,24 @@ public partial class PlayerController : CharacterBody2D
             return;
         }
 
-        _aimPivot.Rotation = aimDirection.Angle();
+        _aimDirection = aimDirection.Normalized();
+        _aimPivot.Rotation = _aimDirection.Angle();
+    }
+
+    private void FireKineticBurst()
+    {
+        if (KineticBurstScene is null)
+        {
+            GD.PushWarning("Cannot fire Kinetic Burst because no projectile scene is assigned.");
+            return;
+        }
+
+        KineticBurstProjectile projectile = KineticBurstScene.Instantiate<KineticBurstProjectile>();
+        GetParent().AddChild(projectile);
+
+        projectile.GlobalPosition = GlobalPosition + _aimDirection * FireSpawnDistance;
+        projectile.Launch(_aimDirection);
+
+        GD.Print($"Fired Kinetic Burst toward {_aimDirection}.");
     }
 }

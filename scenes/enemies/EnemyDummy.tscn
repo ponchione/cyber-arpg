@@ -1,0 +1,22 @@
+[gd_scene load_steps=3 format=3]
+
+[ext_resource type="Script" path="res://scripts/gameplay/entities/EnemyDummy.cs" id="1_enemy_dummy"]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_enemy_dummy"]
+radius = 24.0
+
+[node name="EnemyDummy" type="StaticBody2D"]
+collision_layer = 2
+collision_mask = 0
+script = ExtResource("1_enemy_dummy")
+
+[node name="Body" type="Polygon2D" parent="."]
+color = Color(0.92, 0.14, 0.5, 1)
+polygon = PackedVector2Array(0, -28, 24, -14, 24, 14, 0, 28, -24, 14, -24, -14)
+
+[node name="Core" type="Polygon2D" parent="."]
+color = Color(0.12, 0.03, 0.08, 1)
+polygon = PackedVector2Array(0, -12, 10, -6, 10, 6, 0, 12, -10, 6, -10, -6)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+shape = SubResource("CircleShape2D_enemy_dummy")
