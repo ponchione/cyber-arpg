@@ -1,0 +1,12 @@
+# Godot 4+ specific ignores
+.godot/
+/android/
+
+# IDE and local build output
+.idea/
+.vs/
+/bin/
+/obj/
+*.user
+*.suo
+mono_crash.*.json

@@ -1,0 +1,62 @@
+[gd_scene format=3]
+
+[node name="PlayerHud" type="CanvasLayer"]
+
+[node name="Root" type="Control" parent="."]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Panel" type="PanelContainer" parent="Root"]
+custom_minimum_size = Vector2(280, 86)
+layout_mode = 0
+offset_left = 16.0
+offset_top = 16.0
+offset_right = 296.0
+offset_bottom = 102.0
+
+[node name="MarginContainer" type="MarginContainer" parent="Root/Panel"]
+layout_mode = 2
+theme_override_constants/margin_left = 12
+theme_override_constants/margin_top = 10
+theme_override_constants/margin_right = 12
+theme_override_constants/margin_bottom = 10
+
+[node name="Bars" type="VBoxContainer" parent="Root/Panel/MarginContainer"]
+layout_mode = 2
+theme_override_constants/separation = 8
+
+[node name="HealthRow" type="HBoxContainer" parent="Root/Panel/MarginContainer/Bars"]
+layout_mode = 2
+theme_override_constants/separation = 8
+
+[node name="Label" type="Label" parent="Root/Panel/MarginContainer/Bars/HealthRow"]
+custom_minimum_size = Vector2(52, 0)
+layout_mode = 2
+text = "Health"
+
+[node name="Bar" type="ProgressBar" parent="Root/Panel/MarginContainer/Bars/HealthRow"]
+custom_minimum_size = Vector2(180, 18)
+layout_mode = 2
+size_flags_horizontal = 3
+value = 100.0
+show_percentage = false
+
+[node name="EnergyRow" type="HBoxContainer" parent="Root/Panel/MarginContainer/Bars"]
+layout_mode = 2
+theme_override_constants/separation = 8
+
+[node name="Label" type="Label" parent="Root/Panel/MarginContainer/Bars/EnergyRow"]
+custom_minimum_size = Vector2(52, 0)
+layout_mode = 2
+text = "Energy"
+
+[node name="Bar" type="ProgressBar" parent="Root/Panel/MarginContainer/Bars/EnergyRow"]
+custom_minimum_size = Vector2(180, 18)
+layout_mode = 2
+size_flags_horizontal = 3
+value = 100.0
+show_percentage = false
