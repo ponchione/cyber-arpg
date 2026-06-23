@@ -1,6 +1,9 @@
-[gd_scene format=3]
+[gd_scene load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/ui/hud/PlayerHud.cs" id="1_player_hud"]
 
 [node name="PlayerHud" type="CanvasLayer"]
+script = ExtResource("1_player_hud")
 
 [node name="Root" type="Control" parent="."]
 layout_mode = 3
@@ -60,3 +63,33 @@ layout_mode = 2
 size_flags_horizontal = 3
 value = 100.0
 show_percentage = false
+
+[node name="CombatLogPanel" type="PanelContainer" parent="Root"]
+custom_minimum_size = Vector2(360, 150)
+layout_mode = 0
+offset_left = 16.0
+offset_top = 116.0
+offset_right = 376.0
+offset_bottom = 266.0
+
+[node name="MarginContainer" type="MarginContainer" parent="Root/CombatLogPanel"]
+layout_mode = 2
+theme_override_constants/margin_left = 12
+theme_override_constants/margin_top = 10
+theme_override_constants/margin_right = 12
+theme_override_constants/margin_bottom = 10
+
+[node name="CombatLog" type="VBoxContainer" parent="Root/CombatLogPanel/MarginContainer"]
+layout_mode = 2
+theme_override_constants/separation = 6
+
+[node name="Title" type="Label" parent="Root/CombatLogPanel/MarginContainer/CombatLog"]
+layout_mode = 2
+text = "Combat Log"
+
+[node name="Entries" type="Label" parent="Root/CombatLogPanel/MarginContainer/CombatLog"]
+custom_minimum_size = Vector2(320, 96)
+layout_mode = 2
+text = "No combat events yet."
+autowrap_mode = 3
+clip_text = true

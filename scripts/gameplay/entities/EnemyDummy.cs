@@ -1,7 +1,7 @@
 using Godot;
 using System;
 
-public partial class EnemyDummy : StaticBody2D
+public partial class EnemyDummy : StaticBody2D, IDamageable
 {
     [Export] public int MaxHealth { get; set; } = 100;
 
@@ -14,20 +14,22 @@ public partial class EnemyDummy : StaticBody2D
         GD.Print($"{Name} ready with {_currentHealth} health.");
     }
 
-    public void TakeDamage(int amount)
+    public DamageResult ApplyDamage(DamageRequest request)
     {
-        if (_isDefeated || amount <= 0)
+        if (_isDefeated || request.Amount <= 0)
         {
-            return;
+            return DamageResult.NotApplied(Name.ToString(), _currentHealth, MaxHealth);
         }
 
-        _currentHealth = Math.Max(_currentHealth - amount, 0);
-        GD.Print($"{Name} took {amount} damage. Health: {_currentHealth}/{MaxHealth}");
+        int appliedAmount = Math.Min(request.Amount, _currentHealth);
+        _currentHealth = Math.Max(_currentHealth - request.Amount, 0);
 
         if (_currentHealth == 0)
         {
             _isDefeated = true;
-            GD.Print($"{Name} defeated.");
+            CombatDebugLog.Write($"{Name} defeated.");
         }
+
+        return DamageResult.AppliedTo(Name.ToString(), appliedAmount, _currentHealth, MaxHealth);
     }
 }

@@ -38,13 +38,13 @@ public partial class KineticBurstProjectile : Area2D
 
     private void OnBodyEntered(Node2D body)
     {
-        if (body is not EnemyDummy enemy)
+        if (body is not IDamageable)
         {
             return;
         }
 
-        GD.Print($"Kinetic Burst hit {enemy.Name} for {Damage} damage.");
-        enemy.TakeDamage(Damage);
+        CombatDebugLog.Write($"Kinetic Burst hit {body.Name}.");
+        DamageResolver.Resolve(new DamageRequest(this, body, Damage, "Kinetic Burst"));
         QueueFree();
     }
 }

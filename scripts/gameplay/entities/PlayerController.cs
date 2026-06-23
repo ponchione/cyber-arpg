@@ -67,6 +67,6 @@ public partial class PlayerController : CharacterBody2D
         projectile.GlobalPosition = GlobalPosition + _aimDirection * FireSpawnDistance;
         projectile.Launch(_aimDirection);
 
-        GD.Print($"Fired Kinetic Burst toward {_aimDirection}.");
+        CombatDebugLog.Write($"Fired Kinetic Burst toward {_aimDirection}.");
     }
 }
