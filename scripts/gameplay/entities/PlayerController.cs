@@ -1,5 +1,7 @@
 using Godot;
 
+namespace cyberarpg.scripts.gameplay.entities;
+
 public partial class PlayerController : CharacterBody2D
 {
     private const string MoveLeftAction = "move_left";
@@ -61,7 +63,7 @@ public partial class PlayerController : CharacterBody2D
             return;
         }
 
-        KineticBurstProjectile projectile = KineticBurstScene.Instantiate<KineticBurstProjectile>();
+        abilities.KineticBurstProjectile projectile = KineticBurstScene.Instantiate<abilities.KineticBurstProjectile>();
         GetParent().AddChild(projectile);
 
         projectile.GlobalPosition = GlobalPosition + _aimDirection * FireSpawnDistance;

@@ -1,5 +1,7 @@
 using Godot;
 
+namespace cyberarpg.scripts.gameplay.abilities;
+
 public partial class KineticBurstProjectile : Area2D
 {
     [Export] public float Speed { get; set; } = 720.0f;
