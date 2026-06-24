@@ -6,10 +6,14 @@ public partial class EnemyDummy : StaticBody2D, IDamageable
     private const float DamageNumberLifetimeSeconds = 0.65f;
     private const float DamageNumberRiseDistance = 34.0f;
     private const float HitFlashReturnSeconds = 0.12f;
+    private const float DefeatedMarkerWidth = 4.0f;
 
     private static readonly Vector2 DamageNumberSize = new(84.0f, 26.0f);
     private static readonly Color BodyHitFlashColor = new(1.0f, 0.86f, 0.44f, 1.0f);
     private static readonly Color CoreHitFlashColor = new(1.0f, 0.98f, 0.84f, 1.0f);
+    private static readonly Color BodyDefeatedColor = new(0.18f, 0.16f, 0.19f, 0.82f);
+    private static readonly Color CoreDefeatedColor = new(0.36f, 0.03f, 0.08f, 1.0f);
+    private static readonly Color DefeatedMarkerColor = new(1.0f, 0.18f, 0.12f, 1.0f);
 
     [Export] public int MaxHealth { get; set; } = 100;
 
@@ -17,6 +21,7 @@ public partial class EnemyDummy : StaticBody2D, IDamageable
     private bool _isDefeated;
     private Polygon2D _bodyVisual;
     private Polygon2D _coreVisual;
+    private CollisionShape2D _collisionShape;
     private Color _bodyBaseColor;
     private Color _coreBaseColor;
     private Tween _hitFlashTween;
@@ -26,6 +31,7 @@ public partial class EnemyDummy : StaticBody2D, IDamageable
         _currentHealth = MaxHealth;
         _bodyVisual = GetNodeOrNull<Polygon2D>("Body");
         _coreVisual = GetNodeOrNull<Polygon2D>("Core");
+        _collisionShape = GetNodeOrNull<CollisionShape2D>("CollisionShape2D");
 
         if (_bodyVisual is not null)
         {
@@ -49,19 +55,20 @@ public partial class EnemyDummy : StaticBody2D, IDamageable
 
         int appliedAmount = Math.Min(request.Amount, _currentHealth);
         _currentHealth = Math.Max(_currentHealth - request.Amount, 0);
-        ShowDamageNumber(appliedAmount);
-        PlayHitFlash();
+        bool defeatedByHit = _currentHealth == 0;
 
-        if (_currentHealth == 0)
+        ShowDamageNumber(appliedAmount);
+        PlayHitFlash(defeatedByHit);
+
+        if (defeatedByHit)
         {
-            _isDefeated = true;
-            CombatDebugLog.Write($"{Name} defeated.");
+            Defeat();
         }
 
         return DamageResult.AppliedTo(Name.ToString(), appliedAmount, _currentHealth, MaxHealth);
     }
 
-    private void PlayHitFlash()
+    private void PlayHitFlash(bool settleDefeated = false)
     {
         if (_bodyVisual is null && _coreVisual is null)
         {
@@ -79,7 +86,11 @@ public partial class EnemyDummy : StaticBody2D, IDamageable
         if (_bodyVisual is not null)
         {
             _bodyVisual.Color = BodyHitFlashColor;
-            _hitFlashTween.TweenProperty(_bodyVisual, "color", _bodyBaseColor, HitFlashReturnSeconds)
+            _hitFlashTween.TweenProperty(
+                    _bodyVisual,
+                    "color",
+                    settleDefeated ? BodyDefeatedColor : _bodyBaseColor,
+                    HitFlashReturnSeconds)
                 .SetTrans(Tween.TransitionType.Sine)
                 .SetEase(Tween.EaseType.Out);
         }
@@ -87,10 +98,56 @@ public partial class EnemyDummy : StaticBody2D, IDamageable
         if (_coreVisual is not null)
         {
             _coreVisual.Color = CoreHitFlashColor;
-            _hitFlashTween.TweenProperty(_coreVisual, "color", _coreBaseColor, HitFlashReturnSeconds)
+            _hitFlashTween.TweenProperty(
+                    _coreVisual,
+                    "color",
+                    settleDefeated ? CoreDefeatedColor : _coreBaseColor,
+                    HitFlashReturnSeconds)
                 .SetTrans(Tween.TransitionType.Sine)
                 .SetEase(Tween.EaseType.Out);
         }
+    }
+
+    private void Defeat()
+    {
+        _isDefeated = true;
+        DisableCollision();
+        ShowDefeatedMarker();
+        CombatDebugLog.Write($"{Name} defeated.");
+    }
+
+    private void DisableCollision()
+    {
+        SetDeferred("collision_layer", 0);
+        SetDeferred("collision_mask", 0);
+
+        if (_collisionShape is not null)
+        {
+            _collisionShape.SetDeferred("disabled", true);
+        }
+    }
+
+    private void ShowDefeatedMarker()
+    {
+        Line2D firstSlash = CreateDefeatedMarkerLine();
+        firstSlash.AddPoint(new Vector2(-22.0f, -22.0f));
+        firstSlash.AddPoint(new Vector2(22.0f, 22.0f));
+        AddChild(firstSlash);
+
+        Line2D secondSlash = CreateDefeatedMarkerLine();
+        secondSlash.AddPoint(new Vector2(-22.0f, 22.0f));
+        secondSlash.AddPoint(new Vector2(22.0f, -22.0f));
+        AddChild(secondSlash);
+    }
+
+    private static Line2D CreateDefeatedMarkerLine()
+    {
+        return new Line2D
+        {
+            Width = DefeatedMarkerWidth,
+            DefaultColor = DefeatedMarkerColor,
+            ZIndex = 15,
+        };
     }
 
     private void ShowDamageNumber(int amount)
